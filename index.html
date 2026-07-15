@@ -2,67 +2,139 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>2010 YouTube Player Linker</title>
+    <title>YouTube - Broadcast Yourself.</title>
     <style>
+        /* Authentic 2010 YouTube styling */
         body {
             background-color: #ffffff;
             color: #333333;
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
         }
-        .video-wrapper {
+        #masthead {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e6e6e6;
+            background: #fff;
+            display: flex;
+            align-items: center;
+        }
+        .logo-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000;
+            font-family: "Arial Black", Gadget, sans-serif;
+            letter-spacing: -2px;
+            text-decoration: none;
+        }
+        .logo-box {
+            background: #cc181e;
+            color: #fff;
+            border-radius: 4px;
+            padding: 0 4px;
+            margin-left: 2px;
+        }
+        #main-container {
+            width: 960px;
+            margin: 20px auto;
+            display: flex;
+        }
+        #video-stage {
+            width: 640px;
+        }
+        /* The container holding your target SWF */
+        .video-player-container {
             width: 640px;
             height: 390px;
             background-color: #000000;
+            box-shadow: inset 0 0 10px #000;
+        }
+        #video-details {
+            margin-top: 15px;
+        }
+        #video-details h1 {
+            font-size: 18px;
+            font-weight: normal;
+            margin: 0 0 10px 0;
+        }
+        #sidebar {
+            width: 300px;
+            margin-left: 20px;
+            background: #f9f9f9;
+            border: 1px solid #e6e6e6;
+            padding: 10px;
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-    <div class="video-wrapper" id="player-target">
-        <!-- The script below will instantly generate the Flash code here -->
+    <!-- 2010 Top Navigation bar mockup -->
+    <div id="masthead">
+        <a href="#" class="logo-text">You<span class="logo-box">Tube</span></a>
+    </div>
+
+    <div id="main-container">
+        <!-- Main Video Frame -->
+        <div id="video-stage">
+            <div class="video-player-container" id="swf-target">
+                <!-- JavaScript embeds your target SWF directly into this spot -->
+            </div>
+            
+            <div id="video-details">
+                <h1 id="video-title">Loading Project Video...</h1>
+                <hr style="border:0; border-top:1px solid #e6e6e6;">
+            </div>
+        </div>
+
+        <!-- 2010 Sidebar Mockup -->
+        <div id="sidebar">
+            <h3 style="margin-top:0; font-size:14px;">Suggestions</h3>
+            <p style="color:#666;">Upload your SWF files to your GitHub repository and link them via the URL string parameter.</p>
+        </div>
     </div>
 
     <script type="text/javascript">
-        // 1. Grab the "file" value right from your browser's URL bar
+        // 1. Parse the URL query string parameter strictly for old web browsers
         var urlParams = {};
         window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
             urlParams[key] = value;
         });
 
-        // 2. Default to "video.mp4" if you forget to type a file name in the link
-        var videoFile = urlParams['file'] || 'video.mp4';
-
-        // 3. Build the classic dual-object code to support modern Ruffle AND Windows XP
-        var container = document.getElementById('player-target');
+        // 2. Look for your custom SWF name. Defaults to "video.swf" if missing
+        var swfFile = urlParams['file'] || 'video.swf';
         
-        var flashvars = "video_id=1&eurl=http://localhost/&el=embedded&gl=US&hl=en&as_configured=1&sendto=http://localhost&innertube_context_client_version=1&t=1";
+        // Update page text to display the current filename
+        document.getElementById('video-title').innerHTML = swfFile;
 
-
+        // 3. Inject the dual object tag directly to feed your SWF straight to Ruffle/Flash
+        var container = document.getElementById('swf-target');
         container.innerHTML = 
-            '<!-- Internet Explorer / ActiveX --> ' +
             '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"> ' +
-                '<param name="movie" value="player_as3.swf" /> ' +
+                '<param name="movie" value="' + swfFile + '" /> ' +
                 '<param name="allowScriptAccess" value="always" /> ' +
                 '<param name="allowFullScreen" value="true" /> ' +
                 '<param name="quality" value="high" /> ' +
                 '<param name="bgcolor" value="#000000" /> ' +
-                '<param name="flashvars" value="' + flashvars + '" /> ' +
-                '<!-- Firefox / Chrome / Safari / Ruffle --> ' +
                 '<!--[if !IE]>--> ' +
-                '<object type="application/x-shockwave-flash" data="player_as3.swf" width="640" height="390"> ' +
+                '<object type="application/x-shockwave-flash" data="' + swfFile + '" width="640" height="390"> ' +
                     '<param name="allowScriptAccess" value="always" /> ' +
                     '<param name="allowFullScreen" value="true" /> ' +
                     '<param name="quality" value="high" /> ' +
                     '<param name="bgcolor" value="#000000" /> ' +
-                    '<param name="flashvars" value="' + flashvars + '" /> ' +
                 '<!--<![endif]--> ' +
-                    '<div style="color:white; padding:20px;">Flash Player or Ruffle extension required.</div> ' +
+                    '<div style="color:white; padding:20px; text-align:center;">' +
+                        '<h4>Flash Content Blocked</h4>' +
+                        '<p>Please activate native Adobe Flash Player or use the Ruffle browser extension.</p>' +
+                    '</div> ' +
                 '<!--[if !IE]>--> ' +
                 '</object> ' +
                 '<!--<![endif]--> ' +
             '</object>';
     </script>
+
+    <!-- Ruffle integration layer to make it run beautifully on modern computers too -->
+    <script src="https://unpkg.com"></script>
 
 </body>
 </html>
