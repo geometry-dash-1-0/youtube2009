@@ -36,11 +36,8 @@
         // 3. Build the classic dual-object code to support modern Ruffle AND Windows XP
         var container = document.getElementById('player-target');
         
-        var flashvars = "file=" + videoFile + 
-                        "&video_id=" + videoFile + 
-                        "&flv=" + videoFile + 
-                        "&url=" + videoFile + 
-                        "&t=1&is_embedded=1&el=detailpage&hl=en_US";
+        var flashvars = "video_id=1&eurl=http://localhost/&el=embedded&gl=US&hl=en&as_configured=1&sendto=http://localhost&innertube_context_client_version=1&t=1";
+
 
         container.innerHTML = 
             '<!-- Internet Explorer / ActiveX --> ' +
