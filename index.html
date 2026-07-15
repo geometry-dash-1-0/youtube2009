@@ -2,104 +2,70 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2010 YouTube Player Emulator</title>
+    <title>2010 YouTube Player Linker</title>
     <style>
         body {
-            background-color: #000;
-            color: #fff;
+            background-color: #ffffff;
+            color: #333333;
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
+            margin: 20px;
         }
-        .player-container {
+        .video-wrapper {
             width: 640px;
-            height: 360px;
-            background-color: #1a1a1a;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            height: 390px;
+            background-color: #000000;
         }
     </style>
 </head>
 <body>
 
-    <div class="player-container">
-        <!-- Using embed tag instead of object tag works better for local drag-and-drop -->
-        <embed src="player_as3.swf" 
-               width="640" 
-               height="360" 
-               <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>2010 YouTube Player Emulator</title>
-    <style>
-        body {
-            background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .player-container {
-            width: 640px;
-            height: 360px;
-            background-color: #1a1a1a;
-            box-shadow: 0 0 20px rgba(0,0,0,0.8);
-        }
-    </style>
-</head>
-<body>
-
-    <div class="player-container">
-        <!-- Using embed tag instead of object tag works better for local drag-and-drop -->
-        <embed src="player_as3.swf" 
-               width="640" 
-               height="360" 
-               flashvars="file=dumbwaystodie.mp4&video_id=dumbwaystodie.mp4&flv=dumbwaystodie.mp4&url=dumbwaystodie.mp4&t=1&is_embedded=1&el=detailpage&hl=en_US"
-               allowscriptaccess="always"
-               allowfullscreen="true"
-               quality="high">
+    <div class="video-wrapper" id="player-target">
+        <!-- The script below will instantly generate the Flash code here -->
     </div>
 
-    <!-- Ruffle Polyfill configuration script to force local file decoding -->
-    <script>
-        window.RufflePlayer = window.RufflePlayer || {};
-        window.RufflePlayer.config = {
-            "publicPath": undefined,
-            "polyfilled": true,
-            "allowScriptAccess": true,
-            "forceScale": true,
-            "autoplay": "off"
-        };
-    </script>
-    <script src="https://unpkg.com"></script>
+    <script type="text/javascript">
+        // 1. Grab the "file" value right from your browser's URL bar
+        var urlParams = {};
+        window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
+            urlParams[key] = value;
+        });
 
-</body>
-</html>
-               allowscriptaccess="always"
-               allowfullscreen="true"
-               quality="high">
-    </div>
+        // 2. Default to "video.mp4" if you forget to type a file name in the link
+        var videoFile = urlParams['file'] || 'video.mp4';
 
-    <!-- Ruffle Polyfill configuration script to force local file decoding -->
-    <script>
-        window.RufflePlayer = window.RufflePlayer || {};
-        window.RufflePlayer.config = {
-            "publicPath": undefined,
-            "polyfilled": true,
-            "allowScriptAccess": true,
-            "forceScale": true,
-            "autoplay": "off"
-        };
+        // 3. Build the classic dual-object code to support modern Ruffle AND Windows XP
+        var container = document.getElementById('player-target');
+        
+        var flashvars = "file=" + videoFile + 
+                        "&video_id=" + videoFile + 
+                        "&flv=" + videoFile + 
+                        "&url=" + videoFile + 
+                        "&t=1&is_embedded=1&el=detailpage&hl=en_US";
+
+        container.innerHTML = 
+            '<!-- Internet Explorer / ActiveX --> ' +
+            '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"> ' +
+                '<param name="movie" value="player_as3.swf" /> ' +
+                '<param name="allowScriptAccess" value="always" /> ' +
+                '<param name="allowFullScreen" value="true" /> ' +
+                '<param name="quality" value="high" /> ' +
+                '<param name="bgcolor" value="#000000" /> ' +
+                '<param name="flashvars" value="' + flashvars + '" /> ' +
+                '<!-- Firefox / Chrome / Safari / Ruffle --> ' +
+                '<!--[if !IE]>--> ' +
+                '<object type="application/x-shockwave-flash" data="player_as3.swf" width="640" height="390"> ' +
+                    '<param name="allowScriptAccess" value="always" /> ' +
+                    '<param name="allowFullScreen" value="true" /> ' +
+                    '<param name="quality" value="high" /> ' +
+                    '<param name="bgcolor" value="#000000" /> ' +
+                    '<param name="flashvars" value="' + flashvars + '" /> ' +
+                '<!--<![endif]--> ' +
+                    '<div style="color:white; padding:20px;">Flash Player or Ruffle extension required.</div> ' +
+                '<!--[if !IE]>--> ' +
+                '</object> ' +
+                '<!--<![endif]--> ' +
+            '</object>';
     </script>
-    <script src="https://unpkg.com"></script>
 
 </body>
 </html>
