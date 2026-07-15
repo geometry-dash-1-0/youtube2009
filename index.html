@@ -2,138 +2,78 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>YouTube - Broadcast Yourself.</title>
+    <title>2010 YouTube Player - Native SWF Loader</title>
     <style>
-        /* Authentic 2010 YouTube styling */
         body {
             background-color: #ffffff;
             color: #333333;
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
+            margin: 20px;
         }
-        #masthead {
-            padding: 15px 20px;
-            border-bottom: 1px solid #e6e6e6;
-            background: #fff;
-            display: flex;
-            align-items: center;
-        }
-        .logo-text {
-            font-size: 24px;
-            font-weight: bold;
-            color: #000;
-            font-family: "Arial Black", Gadget, sans-serif;
-            letter-spacing: -2px;
-            text-decoration: none;
-        }
-        .logo-box {
-            background: #cc181e;
-            color: #fff;
-            border-radius: 4px;
-            padding: 0 4px;
-            margin-left: 2px;
-        }
-        #main-container {
-            width: 960px;
-            margin: 20px auto;
-            display: flex;
-        }
-        #video-stage {
-            width: 640px;
-        }
-        /* The container holding your target SWF */
-        .video-player-container {
+        .video-wrapper {
             width: 640px;
             height: 390px;
             background-color: #000000;
-            box-shadow: inset 0 0 10px #000;
-        }
-        #video-details {
-            margin-top: 15px;
-        }
-        #video-details h1 {
-            font-size: 18px;
-            font-weight: normal;
-            margin: 0 0 10px 0;
-        }
-        #sidebar {
-            width: 300px;
-            margin-left: 20px;
-            background: #f9f9f9;
-            border: 1px solid #e6e6e6;
-            padding: 10px;
-            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-    <!-- 2010 Top Navigation bar mockup -->
-    <div id="masthead">
-        <a href="#" class="logo-text">You<span class="logo-box">Tube</span></a>
-    </div>
-
-    <div id="main-container">
-        <!-- Main Video Frame -->
-        <div id="video-stage">
-            <div class="video-player-container" id="swf-target">
-                <!-- JavaScript embeds your target SWF directly into this spot -->
-            </div>
-            
-            <div id="video-details">
-                <h1 id="video-title">Loading Project Video...</h1>
-                <hr style="border:0; border-top:1px solid #e6e6e6;">
-            </div>
-        </div>
-
-        <!-- 2010 Sidebar Mockup -->
-        <div id="sidebar">
-            <h3 style="margin-top:0; font-size:14px;">Suggestions</h3>
-            <p style="color:#666;">Upload your SWF files to your GitHub repository and link them via the URL string parameter.</p>
-        </div>
+    <div class="video-wrapper" id="player-target">
+        <!-- Embedded application targets stream directly below -->
     </div>
 
     <script type="text/javascript">
-        // 1. Parse the URL query string parameter strictly for old web browsers
+        // 1. Process link parameter string (?file=yourasset.swf) safely for old machines
         var urlParams = {};
         window.location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi, function(str, key, value) {
             urlParams[key] = value;
         });
 
-        // 2. Look for your custom SWF name. Defaults to "video.swf" if missing
-        var swfFile = urlParams['file'] || 'video.swf';
-        
-        // Update page text to display the current filename
-        document.getElementById('video-title').innerHTML = swfFile;
+        // Default fallback asset file name
+        var targetSWF = urlParams['file'] || 'animation.swf';
 
-        // 3. Inject the dual object tag directly to feed your SWF straight to Ruffle/Flash
-        var container = document.getElementById('swf-target');
+        // 2. Format localized system variables targeting the internal flash config bypass mapping
+        // We override the default youtube domain lookup to force local repository text scanning
+        var flashvars = "video_id=1" +
+                        "&el=embedded" +
+                        "&gl=US" +
+                        "&hl=en" +
+                        "&as_configured=1" +
+                        "&eurl=" + encodeURIComponent(window.location.href) +
+                        "&t=1" +
+                        "&is_embedded=1" +
+                        "&allow_embed=1" +
+                        "&cr=US";
+
+        var container = document.getElementById('player-target');
+        
         container.innerHTML = 
+            '<!-- ActiveX Plugin Mapping (Internet Explorer) --> ' +
             '<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="640" height="390"> ' +
-                '<param name="movie" value="' + swfFile + '" /> ' +
+                '<param name="movie" value="player_as3.swf" /> ' +
                 '<param name="allowScriptAccess" value="always" /> ' +
                 '<param name="allowFullScreen" value="true" /> ' +
                 '<param name="quality" value="high" /> ' +
                 '<param name="bgcolor" value="#000000" /> ' +
+                '<param name="flashvars" value="' + flashvars + '" /> ' +
+                '<!-- Standard Plugin Mapping (Firefox / Chrome / Safari / Ruffle) --> ' +
                 '<!--[if !IE]>--> ' +
-                '<object type="application/x-shockwave-flash" data="' + swfFile + '" width="640" height="390"> ' +
+                '<object type="application/x-shockwave-flash" data="player_as3.swf" width="640" height="390"> ' +
                     '<param name="allowScriptAccess" value="always" /> ' +
                     '<param name="allowFullScreen" value="true" /> ' +
                     '<param name="quality" value="high" /> ' +
                     '<param name="bgcolor" value="#000000" /> ' +
+                    '<param name="flashvars" value="' + flashvars + '" /> ' +
                 '<!--<![endif]--> ' +
-                    '<div style="color:white; padding:20px; text-align:center;">' +
-                        '<h4>Flash Content Blocked</h4>' +
-                        '<p>Please activate native Adobe Flash Player or use the Ruffle browser extension.</p>' +
-                    '</div> ' +
+                    '<div style="color:white; padding:20px; text-align:center;">Requires Adobe Flash Player or Ruffle Engine.</div> ' +
                 '<!--[if !IE]>--> ' +
                 '</object> ' +
                 '<!--<![endif]--> ' +
             '</object>';
     </script>
 
-    <!-- Ruffle integration layer to make it run beautifully on modern computers too -->
+    <!-- Automated emulator loader to ensure accessibility on modern devices viewing your project -->
     <script src="https://unpkg.com"></script>
 
 </body>
